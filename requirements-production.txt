@@ -1,0 +1,35 @@
+# AI Resume Analyzer - Production Dependencies
+# ==============================================
+
+# Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Production WSGI Server
+gunicorn==21.2.0
+waitress==2.1.2
+
+# PDF Processing
+PyPDF2==4.0.1
+
+# AI/ML
+google-generativeai==0.3.0
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Utilities
+requests==2.31.0
+
+# Database (optional, for future features)
+# SQLAlchemy==2.0.0
+
+# Caching (optional, for performance)
+# redis==5.0.0
+
+# Monitoring (optional)
+# flask-limiter==3.5.0
+
+# Security
+# flask-cors==4.0.0
+# flask-talisman==1.1.0
