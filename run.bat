@@ -50,7 +50,7 @@ echo Starting AI Resume Analyzer...
 echo ========================================
 echo.
 echo ✓ Application is running!
-echo ✓ Open browser and go to: http://localhost:5000
+echo ✓ Open browser and go to: http://localhost:5001
 echo.
 echo Press Ctrl+C to stop the server
 echo.

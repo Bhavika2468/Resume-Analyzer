@@ -10,25 +10,28 @@ from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, jsonify
 from pathlib import Path
 import PyPDF2
+import google.generativeai as genai
+from dotenv import load_dotenv
 
 # ========== CONFIGURATION ==========
 
+# Load environment variables from .env file
+load_dotenv()
+
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max file size
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 
 # Create uploads folder if it doesn't exist
 Path(app.config['UPLOAD_FOLDER']).mkdir(exist_ok=True)
 
 # Configure Gemini API
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
-genai = None
 if not GEMINI_API_KEY:
     print("\nGemini API key not found. Offline analysis is enabled.")
     GEMINI_API_KEY = 'placeholder'  # Allow app to start for testing
 else:
     try:
-        import google.generativeai as genai
         genai.configure(api_key=GEMINI_API_KEY)
         print("Gemini API configured successfully")
     except Exception as e:
@@ -128,6 +131,22 @@ STOP_WORDS = {
 }
 
 # ========== UTILITY FUNCTIONS ==========
+
+def parse_gemini_json(text):
+    """Extract and parse JSON from Gemini's response string safely."""
+    try:
+        # Try parsing directly first
+        return json.loads(text.strip())
+    except json.JSONDecodeError:
+        # If it fails, try to find a JSON block in markdown backticks
+        match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(1))
+            except json.JSONDecodeError:
+                pass
+    return None
+
 
 def allowed_file(filename):
     """Check if file extension is allowed"""
@@ -476,16 +495,12 @@ def analyze_with_gemini(resume_text):
         """
 
         response = model.generate_content(prompt)
-        response_text = response.text.strip()
-
-        # Try to extract JSON if wrapped in markdown code blocks
-        if response_text.startswith('```'):
-            response_text = response_text.split('```')[1]
-            if response_text.startswith('json'):
-                response_text = response_text[4:]
-
-        analysis = json.loads(response_text)
-
+        analysis = parse_gemini_json(response.text)
+        
+        if analysis is None:
+            print("Error: Invalid JSON format from Gemini API")
+            return local_analysis
+            
         # Validate and set defaults
         required_fields = {
             'resume_summary': '',
@@ -506,9 +521,6 @@ def analyze_with_gemini(resume_text):
 
         return merge_analysis(local_analysis, analysis)
 
-    except json.JSONDecodeError:
-        print("Error: Invalid JSON from Gemini API")
-        return local_analysis
     except Exception as e:
         print(f"Error calling Gemini API: {str(e)}")
         return local_analysis
@@ -604,16 +616,11 @@ def analyze_job_match(job_description, resume_data):
         """
 
         response = model.generate_content(prompt)
-        response_text = response.text.strip()
-
-        # Extract JSON from markdown if needed
-        if response_text.startswith('```'):
-            response_text = response_text.split('```')[1]
-            if response_text.startswith('json'):
-                response_text = response_text[4:]
-
-        analysis = json.loads(response_text)
-
+        analysis = parse_gemini_json(response.text)
+        
+        if analysis is None:
+            return analyze_job_match_local(job_description, resume_data)
+            
         # Set defaults
         analysis['match_score'] = analysis.get('match_score', 50)
         analysis['matching_skills'] = analysis.get('matching_skills', [])
@@ -622,9 +629,6 @@ def analyze_job_match(job_description, resume_data):
 
         return analysis
 
-    except json.JSONDecodeError:
-        print("Error: Invalid JSON from Gemini API for job matching")
-        return analyze_job_match_local(job_description, resume_data)
     except Exception as e:
         print(f"Error in job matching: {str(e)}")
         return analyze_job_match_local(job_description, resume_data)
@@ -821,13 +825,13 @@ if __name__ == '__main__':
     else:
         print("Gemini API: NOT configured. Offline analysis is enabled.")
     print("\nStarting server...")
-    print("URL: http://127.0.0.1:5000")
+    print("URL: http://127.0.0.1:5001")
     print("Open this URL in your browser")
     print("\nPress Ctrl+C to stop the server")
     print("="*50 + "\n")
     
     # For development
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='127.0.0.1', port=5001)
 
     # For production, use:
     # from waitress import serve

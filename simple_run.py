@@ -30,6 +30,7 @@ if not os.path.exists('.env'):
     print("\nGet API key from:")
     print("   https://makersuite.google.com/app/apikey")
     print("\n" + "="*60 + "\n")
+    input("Press Enter to exit...")
     sys.exit(1)
 
 # Load .env
@@ -48,6 +49,7 @@ if not api_key or api_key == 'your_google_gemini_api_key_here':
     print("\nGet key from:")
     print("   https://makersuite.google.com/app/apikey")
     print("\n" + "="*60 + "\n")
+    input("Press Enter to exit...")
     sys.exit(1)
 
 print("\n" + "="*60)
@@ -63,7 +65,7 @@ from app import app
 # Open browser automatically
 def open_browser():
     time.sleep(2)
-    webbrowser.open('http://127.0.0.1:5000')
+    webbrowser.open('http://127.0.0.1:5001')
 
 # Start browser thread
 import threading
@@ -71,9 +73,9 @@ thread = threading.Thread(target=open_browser, daemon=True)
 thread.start()
 
 # Run Flask app
-print("🚀 Server running at: http://127.0.0.1:5000\n")
+print("🚀 Server running at: http://127.0.0.1:5001\n")
 try:
-    app.run(debug=True, use_reloader=False, host='127.0.0.1', port=5000)
+    app.run(debug=True, use_reloader=False, host='127.0.0.1', port=5001)
 except KeyboardInterrupt:
     print("\n✓ Server stopped")
     sys.exit(0)

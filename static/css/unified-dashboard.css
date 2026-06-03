@@ -5,8 +5,32 @@
 
 /* Container Wrapper */
 .unified-analyzer {
-    background: linear-gradient(180deg, #0a0e1a 0%, #0f1729 100%);
+    background: 
+        radial-gradient(ellipse at 20% 50%, rgba(56, 189, 248, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(251, 113, 133, 0.04) 0%, transparent 50%),
+        linear-gradient(180deg, #070b14 0%, #0f1729 50%, #111827 100%);
     min-height: calc(100vh - 70px);
+    position: relative;
+}
+
+.unified-analyzer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 40%, rgba(56, 189, 248, 0.03), transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.03), transparent 40%);
+    animation: bgRotate 60s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes bgRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .container {
