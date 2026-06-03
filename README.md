@@ -417,6 +417,4 @@ Future enhancements:
 
 ---
 
-**Made with ❤️ for career growth**
-
-Built with cutting-edge AI technology to help you create the perfect resume.
+**Made with ❤️ by Bhavika for career growth**
