@@ -399,23 +399,9 @@ MAX_FILE_SIZE=10485760 # Max upload size in bytes
 - [PyPDF2 Documentation](https://pypdf2.readthedocs.io/)
 - [CSS Animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Animations)
 
-## 📞 Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the code comments
-3. Check Flask/Gemini documentation
-4. Review error messages in browser console
-
 ## 📄 License
 
 MIT License - Free for personal and commercial use
-
-## 🙏 Credits
-
-- Built with Flask and Google Gemini AI
-- UI Inspired by Linear, Notion, Vercel, and Stripe
-- Icons from Font Awesome
 
 ## 🎉 What's Next?
 
